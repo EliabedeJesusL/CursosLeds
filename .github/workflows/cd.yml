@@ -1,0 +1,56 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        
+      - name: Simulando execução de testes
+        run: |
+          echo "Executando testes unitários..."
+          sleep 2
+          echo "Testes concluídos com sucesso!"
+
+  deploy-staging:
+    name: Deploy - Staging
+    runs-on: ubuntu-latest
+    needs: ci
+    environment: staging
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        
+      - name: Deploy para ambiente de Staging
+        run: |
+          echo "Iniciando deploy em STAGING..."
+          echo "Utilizando a secret de API para autenticação."
+          # Exemplo de uso de secret mascarada
+          echo "Token utilizado: ${{ secrets.STAGING_API_TOKEN }}"
+          sleep 2
+          echo "Deploy em STAGING finalizado com sucesso!"
+
+  deploy-production:
+    name: Deploy - Production
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    environment: production
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        
+      - name: Deploy para ambiente de Produção
+        run: |
+          echo "Iniciando deploy em PRODUÇÃO..."
+          echo "Utilizando a secret crítica de Produção."
+          # Exemplo de uso de secret mascarada
+          echo "Token utilizado: ${{ secrets.PROD_API_KEY }}"
+          sleep 2
+          echo "Deploy em PRODUÇÃO finalizado com sucesso!"
